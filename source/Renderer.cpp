@@ -19,7 +19,11 @@ namespace dae {
 		else
 		{
 			std::cout << "DirectX initialization failed!\n";
+			return;
 		}
+
+		// Initialise the mesh.
+		m_Mesh = new TriangleMesh(m_pDevice);
 	}
 
 	Renderer::~Renderer()
@@ -47,6 +51,8 @@ namespace dae {
 		if (m_pDevice) {
 			m_pDevice->Release();
 		}
+
+		delete m_Mesh;
 	}
 
 	void Renderer::Update(const Timer* pTimer)
@@ -66,6 +72,7 @@ namespace dae {
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);	// Clear both depth and stencil buffer and set to 1 and 0 respectively.
 
 		// Actually render. Set pipeline and invoke draw calls.
+		m_Mesh->Render(m_pDeviceContext);
 
 		// Present the back buffer aka swap.
 		m_pSwapChain->Present(0, 0);

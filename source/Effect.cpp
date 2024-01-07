@@ -1,10 +1,13 @@
 #include "pch.h"
 #include "Effect.h"
+#include "assert.h"
 
 namespace dae {
 	Effect::Effect(ID3D11Device* pDevice, const std::wstring& assetFile)
 	{
 		m_pEffect = LoadEffect(pDevice, assetFile);
+		if (!m_pEffect)
+			assert(false);
 		m_pTechnique = m_pEffect->GetTechniqueByName("DefaultTechnique");
 		if (!m_pTechnique->IsValid()) {
 			std::wcout << L"Technique not valid\n";
@@ -12,6 +15,9 @@ namespace dae {
 	}
 	Effect::~Effect()
 	{
+		if (m_pInputLayout) {
+			m_pInputLayout->Release();
+		}
 		if (m_pTechnique) {
 			m_pTechnique->Release();
 		}
@@ -59,5 +65,16 @@ namespace dae {
 		}
 
 		return pEffect;
+	}
+	bool Effect::CreateInputLayout(ID3D11Device* pDevice, D3D11_INPUT_ELEMENT_DESC* vertexDesc, uint32_t numElements)
+	{
+		D3DX11_PASS_DESC passDesc{};
+		m_pTechnique->GetPassByIndex(0)->GetDesc(&passDesc);
+
+		const HRESULT result = pDevice->CreateInputLayout(vertexDesc, numElements, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayout);
+		if (FAILED(result)) {
+			return false;
+		}
+		return true;
 	}
 }
