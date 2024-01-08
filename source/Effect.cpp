@@ -19,6 +19,9 @@ namespace dae {
 	}
 	Effect::~Effect()
 	{
+		if (m_pDiffuseMapVariable) {
+			m_pDiffuseMapVariable->Release();
+		}
 		if (m_pMatWorldViewProjMatrix) {
 			m_pMatWorldViewProjMatrix->Release();
 		}
@@ -84,9 +87,21 @@ namespace dae {
 		}
 		return true;
 	}
+	bool Effect::CreateShaderResource() {
+		m_pDiffuseMapVariable = m_pEffect->GetVariableByName("gDiffuseMap")->AsShaderResource();
+		if (!m_pDiffuseMapVariable->IsValid()) {
+			std::wcout << L"Diffuse Map Variable is not valid.";
+		}
+	}
 	void Effect::SetMatrix(Matrix m)
 	{
 		std::vector<float> data = m.GetData();
 		m_pMatWorldViewProjMatrix->SetMatrix(&data[0]);
+	}
+	void Effect::SetDiffuseMap(Texture* pDiffuseTexture)
+	{
+		if (m_pDiffuseMapVariable) {
+			m_pDiffuseMapVariable->SetResource(pDiffuseTexture->GetShaderResourceView());
+		}
 	}
 }

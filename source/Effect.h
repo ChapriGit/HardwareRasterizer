@@ -1,4 +1,5 @@
 #pragma once
+#include "Texture.h"
 
 namespace dae {
 	class Effect
@@ -15,17 +16,22 @@ namespace dae {
 		static ID3DX11Effect* LoadEffect(ID3D11Device* pDevice, const std::wstring& assetFile);
 		bool CreateInputLayout(ID3D11Device* pDevice, D3D11_INPUT_ELEMENT_DESC* vertexDesc, uint32_t numElements);
 
+		bool CreateShaderResource();
+
 		ID3DX11Effect* GetEffect() { return m_pEffect; };
 		ID3DX11EffectTechnique* GetTechnique() { return m_pTechnique; };
 		ID3D11InputLayout* GetInputLayout() { return m_pInputLayout; };
 
 		void SetMatrix(Matrix m);
+		void SetDiffuseMap(Texture* pDiffuseTexture);
 
 	private:
 		ID3DX11Effect* m_pEffect{ nullptr };
 		ID3DX11EffectTechnique* m_pTechnique{ nullptr };
 		ID3DX11EffectMatrixVariable* m_pMatWorldViewProjMatrix{ nullptr };
-		ID3D11InputLayout* m_pInputLayout;
+		ID3D11InputLayout* m_pInputLayout{ nullptr };
+
+		ID3DX11EffectShaderResourceVariable* m_pDiffuseMapVariable{ nullptr };
 	};
 };
 
