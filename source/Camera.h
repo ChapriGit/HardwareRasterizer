@@ -14,7 +14,8 @@ namespace dae {
 
 		Matrix GetViewMatrix() { return viewMatrix; };
 		Matrix GetProjectionMatrix() { return projectionMatrix; };
-
+		
+		void Update(const Timer* pTimer);
 		void Initialize(float _fovAngle, Vector3 _origin, int _width, int _height, float _zn, float _zf);
 
 	private:
