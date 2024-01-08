@@ -156,6 +156,15 @@ namespace dae {
 		return {};
 	}
 
+	std::vector<float> Matrix::GetData()
+	{
+		std::vector<float> floatData = {data[0][0], data[0][1], data[0][2], data[0][3],
+										data[1][0], data[1][1], data[1][2], data[1][3],
+										data[2][0], data[2][1], data[2][2], data[2][3], 
+										data[3][0], data[3][1], data[3][2], data[3][3]};
+		return floatData;
+	}
+
 	Vector3 Matrix::GetAxisX() const
 	{
 		return data[0];

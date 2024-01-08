@@ -12,9 +12,16 @@ namespace dae {
 		if (!m_pTechnique->IsValid()) {
 			std::wcout << L"Technique not valid\n";
 		}
+		m_pMatWorldViewProjMatrix = m_pEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
+		if (!m_pMatWorldViewProjMatrix->IsValid()) {
+			std::wcout << L"The Effect Matrix Variable is not valid. \n";
+		}
 	}
 	Effect::~Effect()
 	{
+		if (m_pMatWorldViewProjMatrix) {
+			m_pMatWorldViewProjMatrix->Release();
+		}
 		if (m_pInputLayout) {
 			m_pInputLayout->Release();
 		}
@@ -76,5 +83,10 @@ namespace dae {
 			return false;
 		}
 		return true;
+	}
+	void Effect::SetMatrix(Matrix m)
+	{
+		std::vector<float> data = m.GetData();
+		m_pMatWorldViewProjMatrix->SetMatrix(&data[0]);
 	}
 }

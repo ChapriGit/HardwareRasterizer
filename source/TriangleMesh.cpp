@@ -6,9 +6,9 @@ namespace dae {
 	{
 		// Create data for mesh
 		std::vector<Vertex_PosCol> vertices{
-			{{0.f, .5f, .5f}, {1.f, 0.f, 0.f}},
-			{{.5f, -.5f, .5f}, {0.f, 0.f, 1.f}},
-			{{-.5f, -.5f, .5f}, {0.f, 1.f, 0.f}} };
+			{{0.f, 3.f, 2.f}, {1.f, 0.f, 0.f}},
+			{{3.f, -3.f, 2.f}, {0.f, 0.f, 1.f}},
+			{{-3.f, -3.f, 2.f}, {0.f, 1.f, 0.f}} };
 		std::vector<uint32_t> indices{ 0, 1, 2 };
 
 		// Create Effect
@@ -76,7 +76,7 @@ namespace dae {
 		delete m_pEffect;
 	}
 
-	void TriangleMesh::Render(ID3D11DeviceContext* pDeviceContext)
+	void TriangleMesh::Render(ID3D11DeviceContext* pDeviceContext, Matrix viewProjectionMatrix)
 	{
 		// Set primitive topology
 		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -91,6 +91,10 @@ namespace dae {
 
 		// Set Index Buffer
 		pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		// Set the WorldViewProjection matrix
+		Matrix worldViewProjectionMatrix = m_worldMatrix * viewProjectionMatrix;
+		m_pEffect->SetMatrix(worldViewProjectionMatrix);
 
 		// Draw
 		D3DX11_TECHNIQUE_DESC techDesc{};

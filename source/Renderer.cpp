@@ -23,7 +23,11 @@ namespace dae {
 		}
 
 		// Initialise the mesh.
-		m_Mesh = new TriangleMesh(m_pDevice);
+		m_pMesh = new TriangleMesh(m_pDevice);
+
+		// Initialise the Camera.
+		m_pCamera = new Camera();
+		m_pCamera->Initialize(45.f, { 0.f, 0.f, -10.f }, m_Width, m_Height, 1.f, 100.f);
 	}
 
 	Renderer::~Renderer()
@@ -52,7 +56,8 @@ namespace dae {
 			m_pDevice->Release();
 		}
 
-		delete m_Mesh;
+		delete m_pMesh;
+		delete m_pCamera;
 	}
 
 	void Renderer::Update(const Timer* pTimer)
@@ -72,7 +77,8 @@ namespace dae {
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);	// Clear both depth and stencil buffer and set to 1 and 0 respectively.
 
 		// Actually render. Set pipeline and invoke draw calls.
-		m_Mesh->Render(m_pDeviceContext);
+		Matrix viewProjectionMatrix = m_pCamera->GetViewMatrix() * m_pCamera->GetProjectionMatrix();
+		m_pMesh->Render(m_pDeviceContext, viewProjectionMatrix);
 
 		// Present the back buffer aka swap.
 		m_pSwapChain->Present(0, 0);

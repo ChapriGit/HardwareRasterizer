@@ -19,9 +19,12 @@ namespace dae {
 		ID3DX11EffectTechnique* GetTechnique() { return m_pTechnique; };
 		ID3D11InputLayout* GetInputLayout() { return m_pInputLayout; };
 
+		void SetMatrix(Matrix m);
+
 	private:
 		ID3DX11Effect* m_pEffect{ nullptr };
 		ID3DX11EffectTechnique* m_pTechnique{ nullptr };
+		ID3DX11EffectMatrixVariable* m_pMatWorldViewProjMatrix{ nullptr };
 		ID3D11InputLayout* m_pInputLayout;
 	};
 };

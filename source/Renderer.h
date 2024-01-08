@@ -1,5 +1,6 @@
 #pragma once
 #include "TriangleMesh.h"
+#include "Camera.h"
 
 struct SDL_Window;
 struct SDL_Surface;
@@ -27,7 +28,8 @@ namespace dae
 		int m_Height{};
 
 		bool m_IsInitialized{ false };
-		TriangleMesh* m_Mesh{ nullptr };
+		TriangleMesh* m_pMesh{ nullptr };
+		Camera* m_pCamera{ nullptr };
 
 		//DIRECTX
 		HRESULT InitializeDirectX();
