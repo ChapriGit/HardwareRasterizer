@@ -23,7 +23,7 @@ namespace dae {
 		}
 
 		// Initialise the mesh.
-		m_pMesh = new TriangleMesh(m_pDevice);
+		m_pMesh = new TriangleMesh(m_pDevice, m_pDeviceContext, "./Resources/uv_grid_2.png");
 
 		// Initialise the Camera.
 		m_pCamera = new Camera();

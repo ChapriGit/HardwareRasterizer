@@ -5,12 +5,13 @@ namespace dae {
 	struct Vertex_PosCol {
 		Vector3 position{};
 		ColorRGB color{};
+		Vector2 uv{};
 	};
 
 	class TriangleMesh
 	{
 	public:
-		TriangleMesh(ID3D11Device* pDevice);
+		TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile);
 		~TriangleMesh();
 
 		TriangleMesh(const TriangleMesh&) = delete;
@@ -31,6 +32,7 @@ namespace dae {
 							{0, 1, 0, 0},
 							{0, 0, 1, 0},
 							{0, 0, 0, 1} };
+		Texture* m_pDiffuseTexture{ nullptr };
 	};
 }
 

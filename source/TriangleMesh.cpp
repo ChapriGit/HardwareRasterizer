@@ -2,14 +2,15 @@
 #include "TriangleMesh.h"
 
 namespace dae {
-	TriangleMesh::TriangleMesh(ID3D11Device* pDevice)
+	TriangleMesh::TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile)
 	{
 		// Create data for mesh
-		std::vector<Vertex_PosCol> vertices{
-			{{0.f, 3.f, 2.f}, {1.f, 0.f, 0.f}},
-			{{3.f, -3.f, 2.f}, {0.f, 0.f, 1.f}},
-			{{-3.f, -3.f, 2.f}, {0.f, 1.f, 0.f}} };
-		std::vector<uint32_t> indices{ 0, 1, 2 };
+		std::vector<Vertex_PosCol> vertices{ {{-3, 3, -2}, {}, {0, 0}}, {{0, 3, -2}, {}, {.5f, 0}} ,
+			{ {3, 3, -2}, {}, {1, 0} }, { {-3, 0, -2}, {}, {0, .5} },
+			{ {0, 0, -2}, {}, {.5, .5} }, { {3, 0, -2}, {}, {1, .5} }, 
+			{ {-3, -3, -2}, {}, {0, 1} }, { {0, -3, -2}, {}, {.5, 1} },
+			{ {3, -3, -2}, {}, {1, 1} } };
+		std::vector<uint32_t> indices{ 3, 0, 4, 1, 5, 2, 2, 6, 6, 3, 7, 4, 8, 5 };
 
 		// Create Effect
 		m_pEffect = new Effect(pDevice, L"./Resources/PosCol3D.fx");
@@ -67,6 +68,12 @@ namespace dae {
 		result = pDevice->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
 		if (FAILED(result))
 			return;
+
+		// Create Texture
+		m_pDiffuseTexture = Texture::LoadFromFile(diffuseTextureFile, pDevice);
+		m_pDiffuseTexture->CreateMipMaps(pDeviceContext);
+		m_pEffect->CreateShaderResource();
+		m_pEffect->SetDiffuseMap(m_pDiffuseTexture);
 	}
 
 	TriangleMesh::~TriangleMesh()
@@ -79,12 +86,13 @@ namespace dae {
 		}
 		
 		delete m_pEffect;
+		delete m_pDiffuseTexture;
 	}
 
 	void TriangleMesh::Render(ID3D11DeviceContext* pDeviceContext, Matrix viewProjectionMatrix)
 	{
 		// Set primitive topology
-		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 		// Set Input Layout
 		pDeviceContext->IASetInputLayout(m_pEffect->GetInputLayout());
