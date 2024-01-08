@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Effect.h"
-#include "assert.h"
+#include <cassert>
 
 namespace dae {
 	Effect::Effect(ID3D11Device* pDevice, const std::wstring& assetFile)
@@ -91,7 +91,9 @@ namespace dae {
 		m_pDiffuseMapVariable = m_pEffect->GetVariableByName("gDiffuseMap")->AsShaderResource();
 		if (!m_pDiffuseMapVariable->IsValid()) {
 			std::wcout << L"Diffuse Map Variable is not valid.";
+			return false;
 		}
+		return true;
 	}
 	void Effect::SetMatrix(Matrix m)
 	{

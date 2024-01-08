@@ -1,6 +1,6 @@
-#include "assert.h" 
 #include "pch.h"
 #include "Texture.h"
+#include <cassert> 
 
 namespace dae {
 	Texture::Texture(SDL_Surface* pSurface, ID3D11Device* pDevice)

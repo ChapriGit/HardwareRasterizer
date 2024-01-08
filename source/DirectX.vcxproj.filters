@@ -45,6 +45,9 @@
     <ClInclude Include="Camera.h">
       <Filter>Misc</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -72,6 +75,9 @@
       <Filter>Misc</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
+      <Filter>Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
       <Filter>Misc</Filter>
     </ClCompile>
   </ItemGroup>
