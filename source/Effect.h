@@ -54,6 +54,7 @@ namespace dae {
 		ID3DX11EffectShaderResourceVariable* m_pDiffuseMapVariable{ nullptr };
 
 		FilterMethod m_filterMethod{ FilterMethod::Point };
+		void SetSamplerState(ID3D11Device* pDevice);
 	};
 };
 
