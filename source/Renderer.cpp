@@ -23,11 +23,14 @@ namespace dae {
 		}
 
 		// Initialise the mesh.
-		m_pMesh = new TriangleMesh(m_pDevice, m_pDeviceContext, "./Resources/vehicle.obj", "./Resources/vehicle_diffuse.png");
+		m_pMesh = new TriangleMesh(m_pDevice, m_pDeviceContext, "./Resources/vehicle.obj");
+		m_pMesh->InitializeTextures(m_pDevice, m_pDeviceContext, "./Resources/vehicle_diffuse.png", "./Resources/vehicle_gloss.png", "./Resources/vehicle_normal.png", "./Resources/vehicle_specular.png");
+		std::cout << "Mesh Succesfully Initialized." << std::endl;
 
 		// Initialise the Camera.
 		m_pCamera = new Camera();
 		m_pCamera->Initialize(45.f, { 0.f, 0.f, -50.f }, m_Width, m_Height, 1.f, 100.f);
+		std::cout << "Camera Succesfully Initialized." << std::endl;
 	}
 
 	Renderer::~Renderer()
@@ -87,7 +90,7 @@ namespace dae {
 
 		// Actually render. Set pipeline and invoke draw calls.
 		Matrix viewProjectionMatrix = m_pCamera->GetViewMatrix() * m_pCamera->GetProjectionMatrix();
-		m_pMesh->Render(m_pDeviceContext, viewProjectionMatrix);
+		m_pMesh->Render(m_pDeviceContext, viewProjectionMatrix, m_pCamera->origin);
 
 		// Present the back buffer aka swap.
 		m_pSwapChain->Present(0, 0);

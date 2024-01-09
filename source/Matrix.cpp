@@ -156,7 +156,7 @@ namespace dae {
 		return {};
 	}
 
-	std::vector<float> Matrix::GetData()
+	std::vector<float> Matrix::GetData() const
 	{
 		std::vector<float> floatData = {data[0][0], data[0][1], data[0][2], data[0][3],
 										data[1][0], data[1][1], data[1][2], data[1][3],

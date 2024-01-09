@@ -3,7 +3,7 @@
 #include "Util.h"
 
 namespace dae {
-	TriangleMesh::TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile, const std::string& diffuseTextureFile)
+	TriangleMesh::TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile)
 	{
 		// Create data for mesh
 		//std::vector<Vertex_PosCol> vertices{ {{-3, 3, -2}, {}, {0, 0}}, {{0, 3, -2}, {}, {.5f, 0}} ,
@@ -13,12 +13,14 @@ namespace dae {
 		//	{ {3, -3, -2}, {}, {1, 1} } };
 		//std::vector<uint32_t> indices{ 3, 0, 4, 1, 5, 2, 2, 6, 6, 3, 7, 4, 8, 5 };
 		Util::ParseOBJ(objFile, m_vertices, m_indices);
+		std::cout << "Succesfully parsed object." << std::endl;
 
 		// Create Effect
 		m_pEffect = new Effect(pDevice, L"./Resources/PosCol3D.fx");
 
 		// Create Vertex Layout
-		static constexpr uint32_t numElements{ 3 };
+		std::cout << "Creating Index and Vertex buffers... (0/4)" << std::endl;
+		static constexpr uint32_t numElements{ 4 };
 		D3D11_INPUT_ELEMENT_DESC vertexDesc[numElements]{};
 
 		vertexDesc[0].SemanticName = "POSITION";
@@ -26,20 +28,27 @@ namespace dae {
 		vertexDesc[0].AlignedByteOffset = 0;
 		vertexDesc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 
-		vertexDesc[1].SemanticName = "COLOR";
-		vertexDesc[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;		// 12 bytes
+		vertexDesc[1].SemanticName = "TEXCOORD";
+		vertexDesc[1].Format = DXGI_FORMAT_R32G32_FLOAT;		// 8 bytes - Only float2
 		vertexDesc[1].AlignedByteOffset = 12;
 		vertexDesc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 
-		vertexDesc[2].SemanticName = "TEXCOORD";
-		vertexDesc[2].Format = DXGI_FORMAT_R32G32_FLOAT;		// 8 bytes - Only float2
-		vertexDesc[2].AlignedByteOffset = 24;
+		vertexDesc[2].SemanticName = "NORMAL";
+		vertexDesc[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;		// 12 bytes
+		vertexDesc[2].AlignedByteOffset = 20;
 		vertexDesc[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+
+		vertexDesc[3].SemanticName = "TANGENT";
+		vertexDesc[3].Format = DXGI_FORMAT_R32G32B32_FLOAT;		// 12 bytes
+		vertexDesc[3].AlignedByteOffset = 32;
+		vertexDesc[3].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+
+		std::cout << "Vertex Layout Created. (1/4)" << std::endl;
 
 		// Create Vertex Buffer
 		D3D11_BUFFER_DESC bd = {};
 		bd.Usage = D3D11_USAGE_IMMUTABLE;
-		bd.ByteWidth = sizeof(Vertex_PosCol) * static_cast<uint32_t>(m_vertices.size());
+		bd.ByteWidth = sizeof(Vertex) * static_cast<uint32_t>(m_vertices.size());
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		bd.MiscFlags = 0;
@@ -52,10 +61,14 @@ namespace dae {
 			return;
 		}
 
+		std::cout << "Vertex Buffer Created. (2/4)" << std::endl;
+
 		// Create Input Layout
 		if (!m_pEffect->CreateInputLayout(pDevice, vertexDesc, numElements)) {
 			return;
 		};
+		std::cout << "Input Layout Created. (3/4)" << std::endl;
+
 
 		// Create Index Buffer
 		m_NumIndices = static_cast<uint32_t>(m_indices.size());
@@ -71,15 +84,14 @@ namespace dae {
 		if (FAILED(result))
 			return;
 
-		// Create Texture
-		m_pDiffuseTexture = Texture::LoadFromFile(diffuseTextureFile, pDevice);
-		m_pDiffuseTexture->CreateMipMaps(pDeviceContext);
-		m_pEffect->CreateShaderResource();
-		m_pEffect->SetDiffuseMap(m_pDiffuseTexture);
+		std::cout << "Index Buffer Created. (4/4)" << std::endl;
 	}
 
 	TriangleMesh::~TriangleMesh()
 	{
+		if (m_pMatWorldViewProjMatrix) {
+			m_pMatWorldViewProjMatrix->Release();
+		}
 		if (m_pIndexBuffer) {
 			m_pIndexBuffer->Release();
 		}
@@ -89,9 +101,34 @@ namespace dae {
 		
 		delete m_pEffect;
 		delete m_pDiffuseTexture;
+		delete m_pNormalTexture;
+		delete m_pSpecularTexture;
+		delete m_pGlossinessTexture;
 	}
 
-	void TriangleMesh::Render(ID3D11DeviceContext* pDeviceContext, Matrix viewProjectionMatrix)
+	void TriangleMesh::InitializeTextures(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile, const std::string & normalTextureFile, const std::string& specularTextureFile, const std::string& glossinessTextureFile)
+	{
+		std::cout << "Initializing Textures..." << std::endl;
+		m_pDiffuseTexture = Texture::LoadFromFile(diffuseTextureFile, pDevice);
+		m_pDiffuseTexture->CreateMipMaps(pDeviceContext);
+		m_pNormalTexture = Texture::LoadFromFile(normalTextureFile, pDevice);
+		m_pNormalTexture->CreateMipMaps(pDeviceContext);
+		m_pSpecularTexture = Texture::LoadFromFile(specularTextureFile, pDevice);
+		m_pSpecularTexture->CreateMipMaps(pDeviceContext);
+		m_pGlossinessTexture = Texture::LoadFromFile(glossinessTextureFile, pDevice);
+		m_pGlossinessTexture->CreateMipMaps(pDeviceContext);
+
+		std::cout << "Creating Texture Resources..." << std::endl;
+		m_pEffect->CreateShaderResource();
+		m_pEffect->SetDiffuseMap(m_pDiffuseTexture);
+		m_pEffect->SetNormalMap(m_pNormalTexture);
+		m_pEffect->SetSpecularMap(m_pSpecularTexture);
+		m_pEffect->SetGlossinessMap(m_pGlossinessTexture);
+
+		std::cout << "Textures Initialised." << std::endl;
+	}
+
+	void TriangleMesh::Render(ID3D11DeviceContext* pDeviceContext, const Matrix& viewProjectionMatrix, const Vector3& cameraPosition)
 	{
 		// Set primitive topology
 		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -109,7 +146,13 @@ namespace dae {
 
 		// Set the WorldViewProjection matrix
 		Matrix worldViewProjectionMatrix = m_worldMatrix * viewProjectionMatrix;
-		m_pEffect->SetMatrix(worldViewProjectionMatrix);
+		m_pEffect->SetWorldViewProjectionMatrix(worldViewProjectionMatrix);
+
+		// Set the World Matrix
+		m_pEffect->SetWorldMatrix(m_worldMatrix);
+
+		// Set Camera Origin
+		m_pEffect->SetCameraOrigin(cameraPosition);
 
 		// Draw
 		D3DX11_TECHNIQUE_DESC techDesc{};

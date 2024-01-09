@@ -7,11 +7,17 @@ namespace dae {
 		ColorRGB color{ colors::White };
 		Vector2 uv{};
 	};
+	struct Vertex {
+		Vector3 position{};
+		Vector2 uv{};
+		Vector3 normal{};
+		Vector3 tangent{};
+	};
 
 	class TriangleMesh
 	{
 	public:
-		TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile, const std::string& diffuseTextureFile);
+		TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile);
 		~TriangleMesh();
 
 		TriangleMesh(const TriangleMesh&) = delete;
@@ -19,7 +25,9 @@ namespace dae {
 		TriangleMesh& operator=(const TriangleMesh&) = delete;
 		TriangleMesh& operator=(TriangleMesh&&) noexcept = delete;
 
-		void Render(ID3D11DeviceContext* pDeviceContext, Matrix viewProjectionMatrix);
+		void InitializeTextures(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile, const std::string & normalTextureFile, const std::string& specularTextureFile, const std::string& glossinessTextureFile);
+
+		void Render(ID3D11DeviceContext* pDeviceContext, const Matrix& viewProjectionMatrix, const Vector3& cameraPosition);
 		void CycleFilterMethod(ID3D11Device* pContext);
 
 		void RotateY(float yaw) {
@@ -38,8 +46,11 @@ namespace dae {
 							{0, 0, 1, 0},
 							{0, 0, 0, 1} };
 		Texture* m_pDiffuseTexture{ nullptr };
+		Texture* m_pNormalTexture{ nullptr };
+		Texture* m_pSpecularTexture{ nullptr };
+		Texture* m_pGlossinessTexture{ nullptr };
 
-		std::vector<Vertex_PosCol> m_vertices{};
+		std::vector<Vertex> m_vertices{};
 		std::vector<uint32_t> m_indices{};
 	};
 }

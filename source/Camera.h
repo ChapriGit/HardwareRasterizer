@@ -20,9 +20,9 @@ namespace dae {
 
 		const float ROTATION_SPEED = .05f;
 		float movementSpeed = 10.f;
+		Vector3 origin{};
 
 	private:
-		Vector3 origin{};
 		float fovAngle{ 90.f };
 		float fov{ tanf((fovAngle * TO_RADIANS) / 2.f) };
 		float zn{};
