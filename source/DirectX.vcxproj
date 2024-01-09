@@ -109,6 +109,7 @@ xcopy "$(ProjectDir)Resources\" "$(OutDir)Resources\" /y /D</Command>
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="TriangleMesh.h" />
+    <ClInclude Include="Util.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />

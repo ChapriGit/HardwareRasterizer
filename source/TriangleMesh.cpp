@@ -1,16 +1,18 @@
 #include "pch.h"
 #include "TriangleMesh.h"
+#include "Util.h"
 
 namespace dae {
-	TriangleMesh::TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile)
+	TriangleMesh::TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile, const std::string& diffuseTextureFile)
 	{
 		// Create data for mesh
-		std::vector<Vertex_PosCol> vertices{ {{-3, 3, -2}, {}, {0, 0}}, {{0, 3, -2}, {}, {.5f, 0}} ,
-			{ {3, 3, -2}, {}, {1, 0} }, { {-3, 0, -2}, {}, {0, .5} },
-			{ {0, 0, -2}, {}, {.5, .5} }, { {3, 0, -2}, {}, {1, .5} }, 
-			{ {-3, -3, -2}, {}, {0, 1} }, { {0, -3, -2}, {}, {.5, 1} },
-			{ {3, -3, -2}, {}, {1, 1} } };
-		std::vector<uint32_t> indices{ 3, 0, 4, 1, 5, 2, 2, 6, 6, 3, 7, 4, 8, 5 };
+		//std::vector<Vertex_PosCol> vertices{ {{-3, 3, -2}, {}, {0, 0}}, {{0, 3, -2}, {}, {.5f, 0}} ,
+		//	{ {3, 3, -2}, {}, {1, 0} }, { {-3, 0, -2}, {}, {0, .5} },
+		//	{ {0, 0, -2}, {}, {.5, .5} }, { {3, 0, -2}, {}, {1, .5} }, 
+		//	{ {-3, -3, -2}, {}, {0, 1} }, { {0, -3, -2}, {}, {.5, 1} },
+		//	{ {3, -3, -2}, {}, {1, 1} } };
+		//std::vector<uint32_t> indices{ 3, 0, 4, 1, 5, 2, 2, 6, 6, 3, 7, 4, 8, 5 };
+		Util::ParseOBJ(objFile, m_vertices, m_indices);
 
 		// Create Effect
 		m_pEffect = new Effect(pDevice, L"./Resources/PosCol3D.fx");
@@ -37,13 +39,13 @@ namespace dae {
 		// Create Vertex Buffer
 		D3D11_BUFFER_DESC bd = {};
 		bd.Usage = D3D11_USAGE_IMMUTABLE;
-		bd.ByteWidth = sizeof(Vertex_PosCol) * static_cast<uint32_t>(vertices.size());
+		bd.ByteWidth = sizeof(Vertex_PosCol) * static_cast<uint32_t>(m_vertices.size());
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		bd.MiscFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = vertices.data();
+		initData.pSysMem = m_vertices.data();
 
 		HRESULT result = pDevice->CreateBuffer(&bd, &initData, &m_pVertexBuffer);
 		if (FAILED(result)) {
@@ -56,14 +58,14 @@ namespace dae {
 		};
 
 		// Create Index Buffer
-		m_NumIndices = static_cast<uint32_t>(indices.size());
+		m_NumIndices = static_cast<uint32_t>(m_indices.size());
 		bd.Usage = D3D11_USAGE_IMMUTABLE;
 		bd.ByteWidth = sizeof(uint32_t) * m_NumIndices;
 		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		bd.MiscFlags = 0;
 
-		initData.pSysMem = indices.data();
+		initData.pSysMem = m_indices.data();
 
 		result = pDevice->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
 		if (FAILED(result))
@@ -92,7 +94,7 @@ namespace dae {
 	void TriangleMesh::Render(ID3D11DeviceContext* pDeviceContext, Matrix viewProjectionMatrix)
 	{
 		// Set primitive topology
-		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		// Set Input Layout
 		pDeviceContext->IASetInputLayout(m_pEffect->GetInputLayout());

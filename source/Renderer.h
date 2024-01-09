@@ -18,6 +18,8 @@ namespace dae
 		Renderer& operator=(const Renderer&) = delete;
 		Renderer& operator=(Renderer&&) noexcept = delete;
 
+		void changeCameraMovement(float delta);
+
 		void Update(const Timer* pTimer);
 		void Render() const;
 
@@ -28,6 +30,7 @@ namespace dae
 
 		int m_Width{};
 		int m_Height{};
+		bool m_rotatingEnabled{ true };
 
 		bool m_IsInitialized{ false };
 		TriangleMesh* m_pMesh{ nullptr };

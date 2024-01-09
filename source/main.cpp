@@ -61,6 +61,9 @@ int main(int argc, char* args[])
 					pRenderer->CycleFilterMethod();
 				}
 				break;
+			case SDL_MOUSEWHEEL:
+				pRenderer->changeCameraMovement(e.wheel.y * 1.5f);
+				break;
 			default: ;
 			}
 		}

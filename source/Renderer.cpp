@@ -23,11 +23,11 @@ namespace dae {
 		}
 
 		// Initialise the mesh.
-		m_pMesh = new TriangleMesh(m_pDevice, m_pDeviceContext, "./Resources/uv_grid_2.png");
+		m_pMesh = new TriangleMesh(m_pDevice, m_pDeviceContext, "./Resources/vehicle.obj", "./Resources/vehicle_diffuse.png");
 
 		// Initialise the Camera.
 		m_pCamera = new Camera();
-		m_pCamera->Initialize(45.f, { 0.f, 0.f, -10.f }, m_Width, m_Height, 1.f, 100.f);
+		m_pCamera->Initialize(45.f, { 0.f, 0.f, -50.f }, m_Width, m_Height, 1.f, 100.f);
 	}
 
 	Renderer::~Renderer()
@@ -60,9 +60,18 @@ namespace dae {
 		delete m_pCamera;
 	}
 
+	void dae::Renderer::changeCameraMovement(float delta)
+	{
+		m_pCamera->movementSpeed += delta;
+	}
+
 	void Renderer::Update(const Timer* pTimer)
 	{
 		m_pCamera->Update(pTimer);
+
+		if (m_rotatingEnabled) {
+			m_pMesh->RotateY(pTimer->GetTotal());
+		}
 	}
 
 

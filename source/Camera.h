@@ -18,10 +18,10 @@ namespace dae {
 		void Update(const Timer* pTimer);
 		void Initialize(float _fovAngle, Vector3 _origin, int _width, int _height, float _zn, float _zf);
 
-	private:
 		const float ROTATION_SPEED = .05f;
 		float movementSpeed = 10.f;
 
+	private:
 		Vector3 origin{};
 		float fovAngle{ 90.f };
 		float fov{ tanf((fovAngle * TO_RADIANS) / 2.f) };
