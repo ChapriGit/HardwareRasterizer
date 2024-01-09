@@ -137,7 +137,7 @@ namespace dae {
 		pDeviceContext->IASetInputLayout(m_pEffect->GetInputLayout());
 
 		// Set Vertex Buffer
-		constexpr UINT stride = sizeof(Vertex_PosCol);
+		constexpr UINT stride = sizeof(Vertex);
 		constexpr UINT offset = 0;
 		pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
