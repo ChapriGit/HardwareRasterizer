@@ -118,4 +118,9 @@ namespace dae {
 		}
 	}
 
+	void TriangleMesh::CycleFilterMethod(ID3D11Device* pContext)
+	{
+		m_pEffect->CycleFilterMethod(pContext);
+	}
+
 }

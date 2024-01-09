@@ -20,6 +20,7 @@ namespace dae {
 		TriangleMesh& operator=(TriangleMesh&&) noexcept = delete;
 
 		void Render(ID3D11DeviceContext* pDeviceContext, Matrix viewProjectionMatrix);
+		void CycleFilterMethod(ID3D11Device* pContext);
 
 	private:
 		Effect* m_pEffect{ nullptr };

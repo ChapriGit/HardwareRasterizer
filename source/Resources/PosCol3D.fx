@@ -5,12 +5,7 @@
 float4x4 gWorldViewProj : WorldViewProjection;
 Texture2D gDiffuseMap : DiffuseMap;
 
-SamplerState samPoint {
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = Wrap;    // Other options: Mirror, clamp & Border
-    AddressV = Wrap;    // Other options: Mirror, clamp & Border
-};
-
+SamplerState samplerState : register(s0);
 // ==========================
 // Input and Output Structs
 // ==========================
@@ -45,7 +40,7 @@ VS_OUTPUT VS(VS_INPUT input) {
 // Pixel Shader
 // ==========================
 float4 PS(VS_OUTPUT input) : SV_TARGET {
-    return gDiffuseMap.Sample(samPoint, input.TexCoord);
+    return gDiffuseMap.Sample(samplerState, input.TexCoord);
 }
 
 // ==========================
@@ -59,3 +54,4 @@ technique11 DefaultTechnique {
         SetPixelShader( CompileShader(ps_5_0, PS()) );
     }
 }
+

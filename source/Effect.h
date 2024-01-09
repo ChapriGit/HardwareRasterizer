@@ -2,6 +2,23 @@
 #include "Texture.h"
 
 namespace dae {
+	enum FilterMethod{
+		Point,
+		Linear,
+		Anisotropic
+	};
+
+	inline const char* ToString(FilterMethod fm)
+	{
+		switch (fm)
+		{
+		case Point:			return "Point";
+		case Linear:		return "Linear";
+		case Anisotropic:	return "Anisotropic";
+		default:			return "Unknown";
+		}
+	}
+
 	class Effect
 	{
 	public:
@@ -25,13 +42,18 @@ namespace dae {
 		void SetMatrix(Matrix m);
 		void SetDiffuseMap(Texture* pDiffuseTexture);
 
+		void CycleFilterMethod(ID3D11Device* pDevice);
+
 	private:
 		ID3DX11Effect* m_pEffect{ nullptr };
 		ID3DX11EffectTechnique* m_pTechnique{ nullptr };
 		ID3DX11EffectMatrixVariable* m_pMatWorldViewProjMatrix{ nullptr };
 		ID3D11InputLayout* m_pInputLayout{ nullptr };
+		ID3D11SamplerState* m_pSamplerState{ nullptr };
 
 		ID3DX11EffectShaderResourceVariable* m_pDiffuseMapVariable{ nullptr };
+
+		FilterMethod m_filterMethod{ FilterMethod::Point };
 	};
 };
 

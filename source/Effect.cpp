@@ -16,9 +16,26 @@ namespace dae {
 		if (!m_pMatWorldViewProjMatrix->IsValid()) {
 			std::wcout << L"The Effect Matrix Variable is not valid. \n";
 		}
+
+		D3D11_SAMPLER_DESC samplerDesc = {};
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		HRESULT result = pDevice->CreateSamplerState(&samplerDesc, &m_pSamplerState);
+		if (FAILED(result)) {
+			assert(false);
+		}
+
+		ID3DX11EffectSamplerVariable* sampler = m_pEffect->GetVariableByName("samplerState")->AsSampler();
+		sampler->SetSampler(0, m_pSamplerState);
 	}
 	Effect::~Effect()
 	{
+		if (m_pSamplerState) {
+			m_pSamplerState->Release();
+		}
 		if (m_pDiffuseMapVariable) {
 			m_pDiffuseMapVariable->Release();
 		}
@@ -83,6 +100,7 @@ namespace dae {
 
 		const HRESULT result = pDevice->CreateInputLayout(vertexDesc, numElements, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayout);
 		if (FAILED(result)) {
+			std::wcout << L"Input Layer could not be created.";
 			return false;
 		}
 		return true;
@@ -105,5 +123,45 @@ namespace dae {
 		if (m_pDiffuseMapVariable) {
 			m_pDiffuseMapVariable->SetResource(pDiffuseTexture->GetShaderResourceView());
 		}
+	}
+	void Effect::CycleFilterMethod(ID3D11Device* pDevice)
+	{
+		m_filterMethod = static_cast<FilterMethod>((m_filterMethod + 1));
+		if (m_filterMethod == 3)
+			m_filterMethod = FilterMethod::Point;
+		std::cout << "\n\nFILTER METHOD : " << ToString(m_filterMethod) << std::endl;
+
+		D3D11_SAMPLER_DESC samplerDesc = {};
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		switch (m_filterMethod) {
+		case (FilterMethod::Point):
+			samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+			break;
+		case (FilterMethod::Linear):
+			samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+			break;
+		case (FilterMethod::Anisotropic):
+			samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+			break;
+		default:
+			break;
+		}
+
+		HRESULT result = pDevice->CreateSamplerState(&samplerDesc, &m_pSamplerState);
+		if (FAILED(result)) {
+			std::wcout << L"Could not create new Sampler State.";
+			assert(false);
+		}
+
+		ID3DX11EffectSamplerVariable* sampler = m_pEffect->GetVariableByName("samplerState")->AsSampler();
+		if (!sampler->IsValid()) {
+			std::wcout << L"Sampler State Variable is not valid.";
+			assert(false);
+		}
+		sampler->SetSampler(0, m_pSamplerState);
+
 	}
 }
