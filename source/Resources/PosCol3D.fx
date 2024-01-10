@@ -10,10 +10,12 @@ Texture2D gSpecularMap : SpecularMap;
 Texture2D gGlossinessMap : GlossinessMap;
 float3 gCameraPosition : CAMERA;
 
-static const float3 gLightDirection : LightDirection = {0.577f, -0.577f, 0.577f};
 static const float PI = 3.14159265f;
+
+static const float3 gLightDirection : LightDirection = {0.577f, -0.577f, 0.577f};
 static const float gLightIntensity = 7.0f;
 static const float gShininessIntensity = 25.0f;
+static const float4 gAmbientColor = {.03f, .03f, .03f, 1.f};
 
 SamplerState samplerState : register(s0);
 // ==========================
@@ -59,15 +61,16 @@ float4 GetDiffuseColor(float2 texCoord) {
     return color * gLightIntensity / PI;
 }
 
-float GetAmbientColor(float3 normal) {
+float GetArea(float3 normal) {
     float area = dot(-normalize(gLightDirection), normalize(normal));
     return area > 0 ? area : 0;
 }
 
 float4 PS(VS_OUTPUT input) : SV_TARGET {
     float3 invViewDirection = normalize(gCameraPosition - input.WorldPosition.xyz);
-    float4 color = GetDiffuseColor(input.TexCoord);
-    color *= GetAmbientColor(input.Normal);
+    float area = GetArea(input.Normal);
+    float4 color = GetDiffuseColor(input.TexCoord) * area;
+    color += area * gAmbientColor;
 
     return color;
 }
