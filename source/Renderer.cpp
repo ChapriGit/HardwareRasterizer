@@ -24,7 +24,7 @@ namespace dae {
 
 		// Initialise the mesh.
 		m_pMesh = new TriangleMesh(m_pDevice, m_pDeviceContext, "./Resources/vehicle.obj");
-		m_pMesh->InitializeTextures(m_pDevice, m_pDeviceContext, "./Resources/vehicle_diffuse.png", "./Resources/vehicle_gloss.png", "./Resources/vehicle_normal.png", "./Resources/vehicle_specular.png");
+		m_pMesh->InitializeTextures(m_pDevice, m_pDeviceContext, "./Resources/vehicle_diffuse.png", "./Resources/vehicle_normal.png", "./Resources/vehicle_gloss.png", "./Resources/vehicle_specular.png");
 		std::cout << "Mesh Succesfully Initialized." << std::endl;
 
 		// Initialise the Camera.

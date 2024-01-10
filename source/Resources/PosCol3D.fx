@@ -61,6 +61,22 @@ float4 GetDiffuseColor(float2 texCoord) {
     return color * gLightIntensity / PI;
 }
 
+float4 GetPhongColor(float3 viewDirection, float3 normal, float2 texCoord) {
+    float4 color = gSpecularMap.Sample(samplerState, texCoord);
+    float4 expColor = gGlossinessMap.Sample(samplerState, texCoord);
+
+    float exp = gShininessIntensity * expColor.x;
+
+    float3 reflectance = reflect(normalize(gLightDirection), normalize(normal));
+    float cosine = dot(normalize(reflectance), viewDirection);
+    if (cosine < 0) {
+        float4 black = {0.f, 0.f, 0.f, 1.f};
+        return black;
+    }
+
+    return pow(cosine, exp) * color;
+}
+
 float GetArea(float3 normal) {
     float area = dot(-normalize(gLightDirection), normalize(normal));
     return area > 0 ? area : 0;
@@ -71,6 +87,9 @@ float4 PS(VS_OUTPUT input) : SV_TARGET {
     float area = GetArea(input.Normal);
     float4 color = GetDiffuseColor(input.TexCoord) * area;
     color += area * gAmbientColor;
+    color += GetPhongColor(invViewDirection, input.Normal, input.TexCoord);
+
+    saturate(color);
 
     return color;
 }
