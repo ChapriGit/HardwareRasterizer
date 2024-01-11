@@ -17,7 +17,7 @@ namespace dae {
 	class TriangleMesh
 	{
 	public:
-		TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile);
+		TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile, const std::wstring& effectsFile);
 		~TriangleMesh();
 
 		TriangleMesh(const TriangleMesh&) = delete;
@@ -25,7 +25,7 @@ namespace dae {
 		TriangleMesh& operator=(const TriangleMesh&) = delete;
 		TriangleMesh& operator=(TriangleMesh&&) noexcept = delete;
 
-		void InitializeTextures(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile, const std::string & normalTextureFile, const std::string& specularTextureFile, const std::string& glossinessTextureFile);
+		void InitializeTextures(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile, const std::string& normalTextureFile = "", const std::string& specularTextureFile = "", const std::string& glossinessTextureFile = "");
 
 		void Render(ID3D11DeviceContext* pDeviceContext, const Matrix& viewProjectionMatrix, const Vector3& cameraPosition);
 		void CycleFilterMethod(ID3D11Device* pContext);

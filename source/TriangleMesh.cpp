@@ -3,7 +3,7 @@
 #include "Util.h"
 
 namespace dae {
-	TriangleMesh::TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile)
+	TriangleMesh::TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile, const std::wstring& effectsFile)
 	{
 		// Create data for mesh
 		//std::vector<Vertex_PosCol> vertices{ {{-3, 3, -2}, {}, {0, 0}}, {{0, 3, -2}, {}, {.5f, 0}} ,
@@ -16,7 +16,7 @@ namespace dae {
 		std::cout << "Succesfully parsed object." << std::endl;
 
 		// Create Effect
-		m_pEffect = new Effect(pDevice, L"./Resources/PosCol3D.fx");
+		m_pEffect = new Effect(pDevice, effectsFile);
 
 		// Create Vertex Layout
 		std::cout << "Creating Index and Vertex buffers... (0/4)" << std::endl;
