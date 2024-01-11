@@ -57,6 +57,9 @@
     <ClInclude Include="Texture.h">
       <Filter>Shading</Filter>
     </ClInclude>
+    <ClInclude Include="FireEffect.h">
+      <Filter>Shading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -90,6 +93,9 @@
       <Filter>Shading</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
+      <Filter>Shading</Filter>
+    </ClCompile>
+    <ClCompile Include="FireEffect.cpp">
       <Filter>Shading</Filter>
     </ClCompile>
   </ItemGroup>

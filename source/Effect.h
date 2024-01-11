@@ -3,23 +3,6 @@
 #include "BaseEffect.h"
 
 namespace dae {
-	enum FilterMethod{
-		Point,
-		Linear,
-		Anisotropic
-	};
-
-	inline const char* ToString(FilterMethod fm)
-	{
-		switch (fm)
-		{
-		case Point:			return "Point";
-		case Linear:		return "Linear";
-		case Anisotropic:	return "Anisotropic";
-		default:			return "Unknown";
-		}
-	}
-
 	class Effect : public BaseEffect
 	{
 	public:
@@ -46,15 +29,11 @@ namespace dae {
 	private:
 		ID3DX11EffectMatrixVariable* m_pMatWorldMatrix{ nullptr };
 		ID3DX11EffectVectorVariable* m_pVecCameraOrigin{ nullptr };
-		ID3D11SamplerState* m_pSamplerState{ nullptr };
 
 		ID3DX11EffectShaderResourceVariable* m_pDiffuseMapVariable{ nullptr };
 		ID3DX11EffectShaderResourceVariable* m_pNormalMapVariable{ nullptr };
 		ID3DX11EffectShaderResourceVariable* m_pSpecularMapVariable{ nullptr };
 		ID3DX11EffectShaderResourceVariable* m_pGlossinessMapVariable{ nullptr };
-
-		FilterMethod m_filterMethod{ FilterMethod::Point };
-		void SetSamplerState(ID3D11Device* pDevice);
 	};
 };
 

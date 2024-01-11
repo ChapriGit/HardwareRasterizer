@@ -92,4 +92,44 @@ namespace dae {
 		m_pMatWorldViewProjMatrix->SetMatrix(&data[0]);
 	}
 
+	void BaseEffect::SetSamplerState(ID3D11Device* pDevice)
+	{
+		// Decide on the filter to use depending on the current state.
+		D3D11_FILTER filter{};
+		switch (m_filterMethod) {
+		case (FilterMethod::Point):
+			filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+			break;
+		case (FilterMethod::Linear):
+			filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+			break;
+		case (FilterMethod::Anisotropic):
+			filter = D3D11_FILTER_ANISOTROPIC;
+			break;
+		default:
+			filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+			break;
+		}
+
+		// Create the sampler description.
+		D3D11_SAMPLER_DESC samplerDesc = {};
+		samplerDesc.Filter = filter;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		// Create the Sampler State. Release the old one in case there is one.
+		if (m_pSamplerState) {
+			m_pSamplerState->Release();
+		}
+		HRESULT result = pDevice->CreateSamplerState(&samplerDesc, &m_pSamplerState);
+		if (FAILED(result)) {
+			assert(false);
+		}
+
+		// Set the Sampler State
+		ID3DX11EffectSamplerVariable* sampler = m_pEffect->GetVariableByName("samplerState")->AsSampler();
+		sampler->SetSampler(0, m_pSamplerState);
+	}
+
 }
