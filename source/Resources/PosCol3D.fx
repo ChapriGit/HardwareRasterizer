@@ -17,6 +17,8 @@ static const float gLightIntensity = 7.0f;
 static const float gShininessIntensity = 25.0f;
 static const float4 gAmbientColor = {.03f, .03f, .03f, 1.f};
 
+bool gNormalMappingEnabled : NormalMappingEnabled = true;
+
 SamplerState samplerState : register(s0);
 // ==========================
 // Input and Output Structs
@@ -40,7 +42,6 @@ struct VS_OUTPUT {
 // ==========================
 // Vertex Shader
 // ==========================
-
 VS_OUTPUT VS(VS_INPUT input) {
     VS_OUTPUT output = (VS_OUTPUT)0;
 
@@ -49,13 +50,24 @@ VS_OUTPUT VS(VS_INPUT input) {
     output.TexCoord = input.TexCoord;
     output.Normal = mul(normalize(input.Normal), (float3x3) gWorldMatrix);
     output.Tangent = mul(normalize(input.Tangent), (float3x3) gWorldMatrix);
-
     return output;
 }
 
 // ==========================
 // Pixel Shader
 // ==========================
+float3 CalculateNormal(float3 normal, float3 tangent, float2 texCoord) {
+    float3 binormal = cross(normal, tangent);
+    float3x3 tangentSpaceAxis = {tangent, binormal, normal};
+
+    float3 normalSample = gNormalMap.Sample(samplerState, texCoord).xyz;
+    normalSample = 2.f * normalSample - 1.f;
+
+    float3 normalOut = mul(normalSample, tangentSpaceAxis);
+
+    return normalize(normalOut);
+}
+
 float4 GetDiffuseColor(float2 texCoord) {
     float4 color = gDiffuseMap.Sample(samplerState, texCoord);
     return color * gLightIntensity / PI;
@@ -83,16 +95,22 @@ float GetArea(float3 normal) {
 }
 
 float4 PS(VS_OUTPUT input) : SV_TARGET {
+    float3 normal = input.Normal;
+    if (gNormalMappingEnabled) {
+        normal = CalculateNormal(normalize(input.Normal), normalize(input.Tangent), input.TexCoord);
+    }
+
     float3 invViewDirection = normalize(gCameraPosition - input.WorldPosition.xyz);
-    float area = GetArea(input.Normal);
+    float area = GetArea(normal);
     float4 color = GetDiffuseColor(input.TexCoord) * area;
     color += area * gAmbientColor;
-    color += GetPhongColor(invViewDirection, input.Normal, input.TexCoord);
+    color += GetPhongColor(invViewDirection, normal, input.TexCoord);
 
     saturate(color);
 
     return color;
 }
+
 
 // ==========================
 // Technique - Actual shader, particular to the Effects Framework
