@@ -34,6 +34,7 @@ namespace dae
 
 		bool m_IsInitialized{ false };
 		TriangleMesh* m_pMesh{ nullptr };
+		TriangleMesh* m_pFireMesh{ nullptr };
 		Camera* m_pCamera{ nullptr };
 
 		//DIRECTX

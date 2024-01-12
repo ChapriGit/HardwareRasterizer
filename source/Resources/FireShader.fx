@@ -38,16 +38,8 @@ VS_OUTPUT VS(VS_INPUT input) {
 // ==========================
 // Pixel Shader
 // ==========================
-float4 GetDiffuseColor(float2 texCoord) {
-    float4 color = gDiffuseMap.Sample(samplerState, texCoord);
-    return color * gLightIntensity / PI;
-}
-
 float4 PS(VS_OUTPUT input) : SV_TARGET {
-    float4 color = GetDiffuseColor(input.TexCoord);
-    saturate(color);
-
-    return color;
+    return gDiffuseMap.Sample(samplerState, input.TexCoord);
 }
 
 
@@ -55,8 +47,34 @@ float4 PS(VS_OUTPUT input) : SV_TARGET {
 // Technique - Actual shader, particular to the Effects Framework
 // Sets the functions for each stage. Can have multiple passes.
 // ==========================
+RasterizerState gRasterizerState {
+    CullMode = none;
+    FrontCounterClockwise = false;
+};
+
+BlendState gBlendState {
+    BlendEnable[0] = true;
+    SrcBlend = src_alpha;
+    DestBlend = inv_src_alpha;
+    BlendOp = add;
+    SrcBlendAlpha = zero;
+    DestBlendAlpha = zero;
+    BlendOpAlpha = add;
+    RenderTargetWriteMask[0] = 0x0F;
+};
+
+DepthStencilState gDepthStencilState {
+    DepthEnable = true;
+    DepthWriteMask = zero;
+    DepthFunc = less;
+    StencilEnable = false;
+};
+
 technique11 DefaultTechnique {
     pass P0 {
+        SetRasterizerState(gRasterizerState);
+        SetDepthStencilState(gDepthStencilState, 0);
+        SetBlendState(gBlendState, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
         SetVertexShader( CompileShader(vs_5_0, VS()) );
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader(ps_5_0, PS()) );

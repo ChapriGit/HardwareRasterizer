@@ -127,7 +127,7 @@ namespace dae {
 		Matrix worldViewProjectionMatrix = m_worldMatrix * viewProjectionMatrix;
 		m_pEffect->SetWorldViewProjectionMatrix(worldViewProjectionMatrix);
 
-		if (static_cast<VehicleEffect*>(m_pEffect)) {
+		if (dynamic_cast<VehicleEffect*>(m_pEffect)) {
 			// Set the World Matrix
 			static_cast<VehicleEffect*>(m_pEffect)->SetWorldMatrix(m_worldMatrix);
 

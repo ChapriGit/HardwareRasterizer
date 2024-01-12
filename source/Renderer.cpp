@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Renderer.h"
+#include "FireEffect.h"
 
 namespace dae {
 
@@ -22,10 +23,15 @@ namespace dae {
 			return;
 		}
 
-		// Initialise the mesh.
+		// Initialise the vehicle mesh.
 		m_pMesh = new TriangleMesh(m_pDevice, m_pDeviceContext, new VehicleEffect(m_pDevice, L"./Resources/MainShader.fx"), "./Resources/vehicle.obj");
 		m_pMesh->InitializeTextures(m_pDevice, m_pDeviceContext, "./Resources/vehicle_diffuse.png", "./Resources/vehicle_normal.png", "./Resources/vehicle_gloss.png", "./Resources/vehicle_specular.png");
-		std::cout << "Mesh Succesfully Initialized." << std::endl;
+		std::cout << "Vehicle Mesh Succesfully Initialized." << std::endl;
+
+		// Initialise the fire mesh.
+		m_pFireMesh = new TriangleMesh(m_pDevice, m_pDeviceContext, new FireEffect(m_pDevice, L"./Resources/FireShader.fx"), "./Resources/fireFX.obj");
+		m_pFireMesh->InitializeTextures(m_pDevice, m_pDeviceContext, "./Resources/fireFX_diffuse.png");
+		std::cout << "Fire Mesh Succesfully Initialized." << std::endl;
 
 		// Initialise the Camera.
 		m_pCamera = new Camera();
@@ -60,6 +66,7 @@ namespace dae {
 		}
 
 		delete m_pMesh;
+		delete m_pFireMesh;
 		delete m_pCamera;
 	}
 
@@ -74,6 +81,7 @@ namespace dae {
 
 		if (m_rotatingEnabled) {
 			m_pMesh->RotateY(pTimer->GetTotal());
+			m_pFireMesh->RotateY(pTimer->GetTotal());
 		}
 	}
 
@@ -91,6 +99,7 @@ namespace dae {
 		// Actually render. Set pipeline and invoke draw calls.
 		Matrix viewProjectionMatrix = m_pCamera->GetViewMatrix() * m_pCamera->GetProjectionMatrix();
 		m_pMesh->Render(m_pDeviceContext, viewProjectionMatrix, m_pCamera->origin);
+		m_pFireMesh->Render(m_pDeviceContext, viewProjectionMatrix, m_pCamera->origin);
 
 		// Present the back buffer aka swap.
 		m_pSwapChain->Present(0, 0);

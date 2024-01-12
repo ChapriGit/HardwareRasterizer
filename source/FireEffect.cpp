@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "FireEffect.h"
+#include <cassert>
 
 namespace dae {
 	FireEffect::FireEffect(ID3D11Device* pDevice, const std::wstring& assetFile) : BaseEffect(pDevice, assetFile)
@@ -18,18 +19,23 @@ namespace dae {
 	}
 
 	bool FireEffect::CreateShaderResource(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile, const std::string& normalTextureFile, const std::string& specularTextureFile, const std::string& glossinessTextureFile) {
-		m_pDiffuseMapVariable = m_pEffect->GetVariableByName("gDiffuseMap")->AsShaderResource();
-		if (!m_pDiffuseMapVariable->IsValid()) {
-			std::wcout << L"Diffuse Map Variable is not valid.";
-			return false;
-		}
+		m_pDiffuseTexture = Texture::LoadFromFile(diffuseTextureFile, pDevice);
+		m_pDiffuseTexture->CreateMipMaps(pDeviceContext);
+		
+		SetDiffuseMap();
 		return true;
 	}
 
-	void FireEffect::SetDiffuseMap(Texture* pDiffuseTexture)
+	void FireEffect::SetDiffuseMap()
 	{
+		m_pDiffuseMapVariable = m_pEffect->GetVariableByName("gDiffuseMap")->AsShaderResource();
+		if (!m_pDiffuseMapVariable->IsValid()) {
+			std::wcout << L"Diffuse Map Variable is not valid.";
+			assert(false);
+		}
+
 		if (m_pDiffuseMapVariable) {
-			m_pDiffuseMapVariable->SetResource(pDiffuseTexture->GetShaderResourceView());
+			m_pDiffuseMapVariable->SetResource(m_pDiffuseTexture->GetShaderResourceView());
 		}
 	}
 

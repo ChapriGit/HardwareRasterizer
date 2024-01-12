@@ -116,8 +116,34 @@ float4 PS(VS_OUTPUT input) : SV_TARGET {
 // Technique - Actual shader, particular to the Effects Framework
 // Sets the functions for each stage. Can have multiple passes.
 // ==========================
+RasterizerState gRasterizerState {
+    CullMode = Back;
+    FrontCounterClockwise = false;
+};
+
+BlendState gBlendState {
+    BlendEnable[0] = false;
+    SrcBlend = one;
+    DestBlend = zero;
+    BlendOp = add;
+    SrcBlendAlpha = one;
+    DestBlendAlpha = zero;
+    BlendOpAlpha = add;
+    RenderTargetWriteMask[0] = 0x0F;
+};
+
+DepthStencilState gDepthStencilState {
+    DepthEnable = true;
+    DepthWriteMask = 1;
+    DepthFunc = less;
+    StencilEnable = false;
+};
+
 technique11 DefaultTechnique {
     pass P0 {
+        SetRasterizerState(gRasterizerState);
+        SetDepthStencilState(gDepthStencilState, 0);
+        SetBlendState(gBlendState, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
         SetVertexShader( CompileShader(vs_5_0, VS()) );
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader(ps_5_0, PS()) );
