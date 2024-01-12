@@ -149,4 +149,11 @@ namespace dae {
 		m_pEffect->CycleFilterMethod(pContext);
 	}
 
+	void TriangleMesh::ToggleNormalMap()
+	{
+		if (dynamic_cast<VehicleEffect*>(m_pEffect)) {
+			static_cast<VehicleEffect*>(m_pEffect)->ToggleNormalMap();
+		}
+	}
+
 }

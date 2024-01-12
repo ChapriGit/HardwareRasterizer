@@ -35,7 +35,7 @@ namespace dae {
 
 		// Initialise the Camera.
 		m_pCamera = new Camera();
-		m_pCamera->Initialize(45.f, { 0.f, 0.f, -50.f }, m_Width, m_Height, 1.f, 100.f);
+		m_pCamera->Initialize(45.f, { 0.f, 0.f, -50.f }, m_Width, m_Height, 1.f, 1000.f);
 		std::cout << "Camera Succesfully Initialized." << std::endl;
 	}
 
@@ -80,8 +80,8 @@ namespace dae {
 		m_pCamera->Update(pTimer);
 
 		if (m_rotatingEnabled) {
-			m_pMesh->RotateY(pTimer->GetTotal());
-			m_pFireMesh->RotateY(pTimer->GetTotal());
+			m_pMesh->RotateY(pTimer->GetElapsed() * PI/4);
+			m_pFireMesh->RotateY(pTimer->GetElapsed() * PI/4);
 		}
 	}
 
@@ -92,14 +92,15 @@ namespace dae {
 			return;
 
 		// Clear buffers (RTV and DSV).
-		constexpr float color[4] = {0.f, 0.f, 0.3f, 1.f};
+		constexpr float color[4] = { .39f, .59f, .93f, 1.f};
 		m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);	// Clear the Render Target
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);	// Clear both depth and stencil buffer and set to 1 and 0 respectively.
 
 		// Actually render. Set pipeline and invoke draw calls.
 		Matrix viewProjectionMatrix = m_pCamera->GetViewMatrix() * m_pCamera->GetProjectionMatrix();
 		m_pMesh->Render(m_pDeviceContext, viewProjectionMatrix, m_pCamera->origin);
-		m_pFireMesh->Render(m_pDeviceContext, viewProjectionMatrix, m_pCamera->origin);
+		if (m_fireMeshEnabled)
+			m_pFireMesh->Render(m_pDeviceContext, viewProjectionMatrix, m_pCamera->origin);
 
 		// Present the back buffer aka swap.
 		m_pSwapChain->Present(0, 0);
@@ -108,6 +109,25 @@ namespace dae {
 	void Renderer::CycleFilterMethod()
 	{
 		m_pMesh->CycleFilterMethod(m_pDevice);
+		m_pFireMesh->CycleFilterMethod(m_pDevice);
+	}
+
+	void Renderer::ToggleRotation()
+	{
+		m_rotatingEnabled = !m_rotatingEnabled;
+		std::cout << "ROTATION TOGGLED - " << m_rotatingEnabled << std::endl;
+	}
+
+	void Renderer::ToggleNormalMap()
+	{
+		m_pMesh->ToggleNormalMap();
+	}
+
+	void Renderer::toggleFireMesh()
+	{
+		std::cout << "FIRE MESH TOGGLED - ";
+		m_fireMeshEnabled = !m_fireMeshEnabled;
+		std::cout << m_fireMeshEnabled << "\n";
 	}
 
 	HRESULT Renderer::InitializeDirectX()

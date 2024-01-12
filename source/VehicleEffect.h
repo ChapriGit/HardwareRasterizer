@@ -20,6 +20,7 @@ namespace dae {
 		void SetCameraOrigin(const Vector3& origin);
 
 		void CycleFilterMethod(ID3D11Device* pDevice);
+		void ToggleNormalMap();
 
 	private:
 		Texture* m_pDiffuseTexture{ nullptr };
@@ -39,6 +40,8 @@ namespace dae {
 		void SetNormalMap();
 		void SetSpecularMap();
 		void SetGlossinessMap();
+
+		bool m_normalMapping{ true };
 	};
 };
 

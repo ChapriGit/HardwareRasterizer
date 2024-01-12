@@ -126,4 +126,12 @@ namespace dae {
 
 		SetSamplerState(pDevice);
 	}
+	void VehicleEffect::ToggleNormalMap()
+	{
+		m_normalMapping = !m_normalMapping;
+		ID3DX11EffectScalarVariable* normalMapping = m_pEffect->GetVariableByName("gNormalMappingEnabled")->AsScalar();
+		normalMapping->SetBool(m_normalMapping);
+
+		std::cout << "\nNormal Map Toggled - " << m_normalMapping << std::endl;
+	}
 }

@@ -29,9 +29,13 @@ namespace dae {
 
 		void Render(ID3D11DeviceContext* pDeviceContext, const Matrix& viewProjectionMatrix, const Vector3& cameraPosition);
 		void CycleFilterMethod(ID3D11Device* pContext);
+		void ToggleNormalMap();
 
 		void RotateY(float yaw) {
-			m_worldMatrix = Matrix::CreateRotationY(yaw);
+			totalYaw += yaw;
+			if (totalYaw > 360)
+				totalYaw -= 360;
+			m_worldMatrix = Matrix::CreateRotationY(totalYaw);
 		}
 
 	private:
@@ -48,6 +52,8 @@ namespace dae {
 
 		std::vector<Vertex> m_vertices{};
 		std::vector<uint32_t> m_indices{};
+
+		float totalYaw{ 0.f };
 	};
 }
 
