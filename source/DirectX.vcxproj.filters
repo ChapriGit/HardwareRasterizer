@@ -51,7 +51,7 @@
     <ClInclude Include="BaseEffect.h">
       <Filter>Shading</Filter>
     </ClInclude>
-    <ClInclude Include="Effect.h">
+    <ClInclude Include="VehicleEffect.h">
       <Filter>Shading</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
@@ -89,7 +89,7 @@
     <ClCompile Include="BaseEffect.cpp">
       <Filter>Shading</Filter>
     </ClCompile>
-    <ClCompile Include="Effect.cpp">
+    <ClCompile Include="VehicleEffect.cpp">
       <Filter>Shading</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">

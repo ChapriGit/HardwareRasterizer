@@ -3,7 +3,7 @@
 #include "Util.h"
 
 namespace dae {
-	TriangleMesh::TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile, const std::wstring& effectsFile)
+	TriangleMesh::TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, BaseEffect* pEffect, const std::string& objFile)
 	{
 		// Create data for mesh
 		//std::vector<Vertex_PosCol> vertices{ {{-3, 3, -2}, {}, {0, 0}}, {{0, 3, -2}, {}, {.5f, 0}} ,
@@ -16,7 +16,7 @@ namespace dae {
 		std::cout << "Succesfully parsed object." << std::endl;
 
 		// Create Effect
-		m_pEffect = new Effect(pDevice, effectsFile);
+		m_pEffect = pEffect;
 
 		// Create Vertex Layout
 		std::cout << "Creating Index and Vertex buffers... (0/4)" << std::endl;
@@ -100,32 +100,11 @@ namespace dae {
 		}
 		
 		delete m_pEffect;
-		delete m_pDiffuseTexture;
-		delete m_pNormalTexture;
-		delete m_pSpecularTexture;
-		delete m_pGlossinessTexture;
 	}
 
 	void TriangleMesh::InitializeTextures(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile, const std::string & normalTextureFile, const std::string& specularTextureFile, const std::string& glossinessTextureFile)
 	{
-		std::cout << "Initializing Textures..." << std::endl;
-		m_pDiffuseTexture = Texture::LoadFromFile(diffuseTextureFile, pDevice);
-		m_pDiffuseTexture->CreateMipMaps(pDeviceContext);
-		m_pNormalTexture = Texture::LoadFromFile(normalTextureFile, pDevice);
-		m_pNormalTexture->CreateMipMaps(pDeviceContext);
-		m_pSpecularTexture = Texture::LoadFromFile(specularTextureFile, pDevice);
-		m_pSpecularTexture->CreateMipMaps(pDeviceContext);
-		m_pGlossinessTexture = Texture::LoadFromFile(glossinessTextureFile, pDevice);
-		m_pGlossinessTexture->CreateMipMaps(pDeviceContext);
-
-		std::cout << "Creating Texture Resources..." << std::endl;
-		m_pEffect->CreateShaderResource();
-		m_pEffect->SetDiffuseMap(m_pDiffuseTexture);
-		m_pEffect->SetNormalMap(m_pNormalTexture);
-		m_pEffect->SetSpecularMap(m_pSpecularTexture);
-		m_pEffect->SetGlossinessMap(m_pGlossinessTexture);
-
-		std::cout << "Textures Initialised." << std::endl;
+		m_pEffect->CreateShaderResource(pDevice, pDeviceContext, diffuseTextureFile, normalTextureFile, specularTextureFile, glossinessTextureFile);
 	}
 
 	void TriangleMesh::Render(ID3D11DeviceContext* pDeviceContext, const Matrix& viewProjectionMatrix, const Vector3& cameraPosition)
@@ -148,11 +127,13 @@ namespace dae {
 		Matrix worldViewProjectionMatrix = m_worldMatrix * viewProjectionMatrix;
 		m_pEffect->SetWorldViewProjectionMatrix(worldViewProjectionMatrix);
 
-		// Set the World Matrix
-		m_pEffect->SetWorldMatrix(m_worldMatrix);
+		if (static_cast<VehicleEffect*>(m_pEffect)) {
+			// Set the World Matrix
+			static_cast<VehicleEffect*>(m_pEffect)->SetWorldMatrix(m_worldMatrix);
 
-		// Set Camera Origin
-		m_pEffect->SetCameraOrigin(cameraPosition);
+			// Set Camera Origin
+			static_cast<VehicleEffect*>(m_pEffect)->SetCameraOrigin(cameraPosition);
+		}
 
 		// Draw
 		D3DX11_TECHNIQUE_DESC techDesc{};

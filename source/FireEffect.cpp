@@ -14,9 +14,10 @@ namespace dae {
 		if (m_pDiffuseMapVariable) {
 			m_pDiffuseMapVariable->Release();
 		}
+		delete m_pDiffuseTexture;
 	}
 
-	bool FireEffect::CreateShaderResource() {
+	bool FireEffect::CreateShaderResource(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile, const std::string& normalTextureFile, const std::string& specularTextureFile, const std::string& glossinessTextureFile) {
 		m_pDiffuseMapVariable = m_pEffect->GetVariableByName("gDiffuseMap")->AsShaderResource();
 		if (!m_pDiffuseMapVariable->IsValid()) {
 			std::wcout << L"Diffuse Map Variable is not valid.";

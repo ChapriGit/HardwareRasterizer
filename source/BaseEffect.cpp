@@ -19,6 +19,9 @@ namespace dae {
 	}
 	BaseEffect::~BaseEffect()
 	{
+		if (m_pSamplerState) {
+			m_pSamplerState->Release();
+		}
 		if (m_pMatWorldViewProjMatrix) {
 			m_pMatWorldViewProjMatrix->Release();
 		}

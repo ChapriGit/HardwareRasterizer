@@ -1,5 +1,5 @@
 #pragma once
-#include "Effect.h"
+#include "VehicleEffect.h"
 
 namespace dae {
 	struct Vertex_PosCol {
@@ -17,7 +17,7 @@ namespace dae {
 	class TriangleMesh
 	{
 	public:
-		TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& objFile, const std::wstring& effectsFile);
+		TriangleMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, BaseEffect* pEffect, const std::string& objFilee);
 		~TriangleMesh();
 
 		TriangleMesh(const TriangleMesh&) = delete;
@@ -35,7 +35,7 @@ namespace dae {
 		}
 
 	private:
-		Effect* m_pEffect{ nullptr };
+		BaseEffect* m_pEffect{ nullptr };
 		ID3D11Buffer* m_pVertexBuffer{ nullptr };
 		ID3D11Buffer* m_pIndexBuffer{ nullptr };
 		ID3DX11EffectMatrixVariable* m_pMatWorldViewProjMatrix{ nullptr };
@@ -45,10 +45,6 @@ namespace dae {
 							{0, 1, 0, 0},
 							{0, 0, 1, 0},
 							{0, 0, 0, 1} };
-		Texture* m_pDiffuseTexture{ nullptr };
-		Texture* m_pNormalTexture{ nullptr };
-		Texture* m_pSpecularTexture{ nullptr };
-		Texture* m_pGlossinessTexture{ nullptr };
 
 		std::vector<Vertex> m_vertices{};
 		std::vector<uint32_t> m_indices{};

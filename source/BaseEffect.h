@@ -22,7 +22,7 @@ namespace dae {
 	{
 	public:
 		BaseEffect(ID3D11Device* pDevice, const std::wstring& assetFile);
-		~BaseEffect();
+		virtual ~BaseEffect();
 
 		BaseEffect(const BaseEffect&) = delete;
 		BaseEffect(BaseEffect&&) noexcept = delete;
@@ -38,7 +38,7 @@ namespace dae {
 
 		void SetWorldViewProjectionMatrix(const Matrix& m);
 
-		virtual bool CreateShaderResource() = 0;
+		virtual bool CreateShaderResource(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile, const std::string& normalTextureFile = "", const std::string& specularTextureFile = "", const std::string& glossinessTextureFile = "") = 0;
 		virtual void CycleFilterMethod(ID3D11Device* pDevice) = 0;
 
 	protected:

@@ -46,6 +46,9 @@ namespace dae {
 
 	Texture::~Texture()
 	{
+		if (m_pSRV) {
+			m_pSRV->Release();
+		}
 		if (m_pResource) {
 			m_pResource->Release();
 		}
