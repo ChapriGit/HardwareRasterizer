@@ -9,6 +9,7 @@ namespace dae {
 	}
 	FireEffect::~FireEffect()
 	{
+		// Release any DirectX resources.
 		if (m_pSamplerState) {
 			m_pSamplerState->Release();
 		}
@@ -28,12 +29,14 @@ namespace dae {
 
 	void FireEffect::SetDiffuseMap()
 	{
+		// Get the global variable related to the diffuse map.
 		m_pDiffuseMapVariable = m_pEffect->GetVariableByName("gDiffuseMap")->AsShaderResource();
 		if (!m_pDiffuseMapVariable->IsValid()) {
 			std::wcout << L"Diffuse Map Variable is not valid.";
 			assert(false);
 		}
 
+		// Set it to the saved View.
 		if (m_pDiffuseMapVariable) {
 			m_pDiffuseMapVariable->SetResource(m_pDiffuseTexture->GetShaderResourceView());
 		}

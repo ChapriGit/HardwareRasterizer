@@ -5,13 +5,18 @@
 namespace dae {
 	BaseEffect::BaseEffect(ID3D11Device* pDevice, const std::wstring& assetFile)
 	{
+		// Set up the effect from the given FX file.
 		m_pEffect = LoadEffect(pDevice, assetFile);
 		if (!m_pEffect)
 			assert(false);
+
+		// Create a pointer to the default technique for later use.
 		m_pTechnique = m_pEffect->GetTechniqueByName("DefaultTechnique");
 		if (!m_pTechnique->IsValid()) {
 			std::wcout << L"Technique not valid\n";
 		}
+
+		// Create a pointer to the World View Projection Matrix for later use.
 		m_pMatWorldViewProjMatrix = m_pEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
 		if (!m_pMatWorldViewProjMatrix->IsValid()) {
 			std::wcout << L"The Effect Matrix Variable is not valid. \n";
@@ -19,6 +24,7 @@ namespace dae {
 	}
 	BaseEffect::~BaseEffect()
 	{
+		// Release all DirectX resources.
 		if (m_pSamplerState) {
 			m_pSamplerState->Release();
 		}
@@ -49,9 +55,11 @@ namespace dae {
 		shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 
+		// Load in the effect from the file.
 		result = D3DX11CompileEffectFromFile(assetFile.c_str(), nullptr, nullptr, shaderFlags, 0,
 			pDevice, &pEffect, &pErrorBlob);
 		if (FAILED(result)) {
+			// Deal with a failed result.
 			if (pErrorBlob != nullptr) {
 				const char* pErrors = static_cast<char*>(pErrorBlob->GetBufferPointer());
 
@@ -81,6 +89,7 @@ namespace dae {
 		D3DX11_PASS_DESC passDesc{};
 		m_pTechnique->GetPassByIndex(0)->GetDesc(&passDesc);
 
+		// Create an Input Layout with the given element description and nr of elements.
 		const HRESULT result = pDevice->CreateInputLayout(vertexDesc, numElements, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayout);
 		if (FAILED(result)) {
 			std::wcout << L"Input Layer could not be created.";
@@ -91,6 +100,7 @@ namespace dae {
 
 	void BaseEffect::SetWorldViewProjectionMatrix(const Matrix& m)
 	{
+		// Set the World View Projection Matrix in the effect.
 		std::vector<float> data = m.GetData();
 		m_pMatWorldViewProjMatrix->SetMatrix(&data[0]);
 	}

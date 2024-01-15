@@ -23,6 +23,7 @@ namespace dae
 		void Update(const Timer* pTimer);
 		void Render() const;
 
+		// Functions for cycling or toggling features.
 		void CycleFilterMethod();
 		void ToggleRotation();
 		void ToggleNormalMap();
@@ -36,6 +37,7 @@ namespace dae
 		bool m_rotatingEnabled{ true };
 		bool m_fireMeshEnabled{ true };
 
+		// Initialized stuff.
 		bool m_IsInitialized{ false };
 		TriangleMesh* m_pMesh{ nullptr };
 		TriangleMesh* m_pFireMesh{ nullptr };
@@ -43,14 +45,14 @@ namespace dae
 
 		//DIRECTX
 		HRESULT InitializeDirectX();
-		ID3D11Device* m_pDevice{ nullptr };
-		ID3D11DeviceContext* m_pDeviceContext{ nullptr };
+		ID3D11Device* m_pDevice{ nullptr };						// Resource for creating and allocating resources. 
+		ID3D11DeviceContext* m_pDeviceContext{ nullptr };		// The context in which a device is used. Sets the pipeline state and uses the resources of the Device to generate rendering commands.
 
-		IDXGISwapChain* m_pSwapChain{ nullptr };
-		ID3D11Texture2D* m_pDepthStencilBuffer{ nullptr };
-		ID3D11DepthStencilView* m_pDepthStencilView{ nullptr };
+		IDXGISwapChain* m_pSwapChain{ nullptr };				// The swap chain holding the buffers to switch between what is presented and what is being calculated. (Front vs. back buffer.)
+		ID3D11Texture2D* m_pDepthStencilBuffer{ nullptr };		// The depth and stencil buffer.
+		ID3D11DepthStencilView* m_pDepthStencilView{ nullptr }; // The view determining how the depth buffer is used in the pipeline.
 
-		ID3D11Texture2D* m_pRenderTargetBuffer{ nullptr };
-		ID3D11RenderTargetView* m_pRenderTargetView{ nullptr };
+		ID3D11Texture2D* m_pRenderTargetBuffer{ nullptr };		// The back buffer, in this case, aka render target, as we only have one.
+		ID3D11RenderTargetView* m_pRenderTargetView{ nullptr }; // The view of the render target. Determines how the render target is used in the pipeline.
 	};
 }

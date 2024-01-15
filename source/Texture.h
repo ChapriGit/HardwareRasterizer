@@ -11,8 +11,8 @@ namespace dae {
 
 	private:
 		Texture(SDL_Surface* pSurface, ID3D11Device* pDevice);
-		ID3D11Texture2D* m_pResource{ nullptr };
-		ID3D11ShaderResourceView* m_pSRV{ nullptr };
+		ID3D11Texture2D* m_pResource{ nullptr };		// The resource itself.
+		ID3D11ShaderResourceView* m_pSRV{ nullptr };	// The view for the texture. Describing how it should be used in the pipeline.
 	};
 }
 

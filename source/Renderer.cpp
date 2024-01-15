@@ -41,6 +41,7 @@ namespace dae {
 
 	Renderer::~Renderer()
 	{
+		// Release any DirectX resources.
 		if (m_pRenderTargetView) {
 			m_pRenderTargetView->Release();
 		}
@@ -65,6 +66,7 @@ namespace dae {
 			m_pDevice->Release();
 		}
 
+		// Clean up remaining pointers.
 		delete m_pMesh;
 		delete m_pFireMesh;
 		delete m_pCamera;
@@ -72,6 +74,7 @@ namespace dae {
 
 	void dae::Renderer::changeCameraMovement(float delta)
 	{
+		// Speeding up or slowing down flying through the world.
 		m_pCamera->movementSpeed += delta;
 	}
 

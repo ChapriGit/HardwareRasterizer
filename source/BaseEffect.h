@@ -42,13 +42,13 @@ namespace dae {
 		virtual void CycleFilterMethod(ID3D11Device* pDevice) = 0;
 
 	protected:
-		ID3DX11Effect* m_pEffect{ nullptr };
-		ID3DX11EffectTechnique* m_pTechnique{ nullptr };
-		ID3DX11EffectMatrixVariable* m_pMatWorldViewProjMatrix{ nullptr };
-		ID3D11InputLayout* m_pInputLayout{ nullptr };
+		ID3DX11Effect* m_pEffect{ nullptr };								// The effect itself.
+		ID3DX11EffectTechnique* m_pTechnique{ nullptr };					// The default technique used to render.
+		ID3DX11EffectMatrixVariable* m_pMatWorldViewProjMatrix{ nullptr };	// The World View Projection Matrix.
+		ID3D11InputLayout* m_pInputLayout{ nullptr };						// Describes the layout of the elements (vertices). So the GPU knows what data is available and how it's presented in the buffer.
 
-		ID3D11SamplerState* m_pSamplerState{ nullptr };
-		FilterMethod m_filterMethod{ FilterMethod::Point };
+		ID3D11SamplerState* m_pSamplerState{ nullptr };						// The Sampler State used.
+		FilterMethod m_filterMethod{ FilterMethod::Point };					// The filter method the sampler state should be using.
 
 		void SetSamplerState(ID3D11Device* pDevice);
 	};

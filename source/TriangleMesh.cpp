@@ -18,7 +18,7 @@ namespace dae {
 		// Create Effect
 		m_pEffect = pEffect;
 
-		// Create Vertex Layout
+		// Create Vertex Layout.
 		std::cout << "Creating Index and Vertex buffers... (0/4)" << std::endl;
 		static constexpr uint32_t numElements{ 4 };
 		D3D11_INPUT_ELEMENT_DESC vertexDesc[numElements]{};
@@ -45,7 +45,7 @@ namespace dae {
 
 		std::cout << "Vertex Layout Created. (1/4)" << std::endl;
 
-		// Create Vertex Buffer
+		// Create Vertex Buffer to put the vertices in.
 		D3D11_BUFFER_DESC bd = {};
 		bd.Usage = D3D11_USAGE_IMMUTABLE;
 		bd.ByteWidth = sizeof(Vertex) * static_cast<uint32_t>(m_vertices.size());
@@ -63,14 +63,14 @@ namespace dae {
 
 		std::cout << "Vertex Buffer Created. (2/4)" << std::endl;
 
-		// Create Input Layout
+		// Create Input Layout.
 		if (!m_pEffect->CreateInputLayout(pDevice, vertexDesc, numElements)) {
 			return;
 		};
 		std::cout << "Input Layout Created. (3/4)" << std::endl;
 
 
-		// Create Index Buffer
+		// Create Index Buffer.
 		m_NumIndices = static_cast<uint32_t>(m_indices.size());
 		bd.Usage = D3D11_USAGE_IMMUTABLE;
 		bd.ByteWidth = sizeof(uint32_t) * m_NumIndices;
@@ -89,6 +89,7 @@ namespace dae {
 
 	TriangleMesh::~TriangleMesh()
 	{
+		// Release any DirectX resources.
 		if (m_pMatWorldViewProjMatrix) {
 			m_pMatWorldViewProjMatrix->Release();
 		}

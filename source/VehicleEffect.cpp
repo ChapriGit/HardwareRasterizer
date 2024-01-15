@@ -5,19 +5,24 @@
 namespace dae {
 	VehicleEffect::VehicleEffect(ID3D11Device* pDevice, const std::wstring& assetFile) : BaseEffect(pDevice, assetFile)
 	{
+		// Create a pointer to the World Matrix for later use.
 		m_pMatWorldMatrix = m_pEffect->GetVariableByName("gWorldMatrix")->AsMatrix();
 		if (!m_pMatWorldMatrix->IsValid()) {
 			std::wcout << L"The Effect Matrix Variable is not valid. \n";
 		}
+
+		// Create a pointer to the camera position for later use.
 		m_pVecCameraOrigin = m_pEffect->GetVariableByName("gCameraPosition")->AsVector();
 		if (!m_pVecCameraOrigin->IsValid()) {
 			std::wcout << L"The Effect Matrix Variable is not valid. \n";
 		}
 		
+		// Set the sampler state.
 		SetSamplerState(pDevice);
 	}
 	VehicleEffect::~VehicleEffect()
 	{
+		// Release any DirectX resourses.
 		if (m_pDiffuseMapVariable) {
 			m_pDiffuseMapVariable->Release();
 		}
@@ -37,6 +42,7 @@ namespace dae {
 			m_pMatWorldMatrix->Release();
 		}
 
+		// Delete any pointers left.
 		delete m_pDiffuseTexture;
 		delete m_pNormalTexture;
 		delete m_pSpecularTexture;
@@ -44,6 +50,7 @@ namespace dae {
 	}
 
 	bool VehicleEffect::CreateShaderResource(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const std::string& diffuseTextureFile, const std::string& normalTextureFile, const std::string& specularTextureFile, const std::string& glossinessTextureFile) {
+		// Create all the texture resources.
 		m_pDiffuseTexture = Texture::LoadFromFile(diffuseTextureFile, pDevice);
 		m_pDiffuseTexture->CreateMipMaps(pDeviceContext);
 		m_pNormalTexture = Texture::LoadFromFile(normalTextureFile, pDevice);
@@ -53,6 +60,7 @@ namespace dae {
 		m_pGlossinessTexture = Texture::LoadFromFile(glossinessTextureFile, pDevice);
 		m_pGlossinessTexture->CreateMipMaps(pDeviceContext);
 	
+		// Set the actual variables for use in the effect.
 		SetDiffuseMap();
 		SetNormalMap();
 		SetSpecularMap();
