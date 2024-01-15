@@ -75,7 +75,7 @@ namespace dae {
 	void dae::Renderer::changeCameraMovement(float delta)
 	{
 		// Speeding up or slowing down flying through the world.
-		m_pCamera->movementSpeed += delta;
+		m_pCamera->movementSpeed = m_pCamera->movementSpeed + delta > 0 ? m_pCamera->movementSpeed + delta : 0;
 	}
 
 	void Renderer::Update(const Timer* pTimer)

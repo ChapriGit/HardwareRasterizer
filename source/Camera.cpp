@@ -66,10 +66,14 @@ namespace dae {
 			origin += movementDirection * (deltaTime * movementSpeed);
 		}
 
+		if ((mouseState & SDL_BUTTON(SDL_BUTTON_LEFT) && mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT)) && abs(mouseY) > 1) {
+			movementDirection = mouseY > 0 ? Vector3{0, 1, 0} : Vector3{0, -1, 0};
+			origin += movementDirection * (deltaTime * movementSpeed * movementSpeedMouse);
+		}
 		else {
 			if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT) && abs(mouseY) > 0.001) {
-				float movementDist = mouseY > 0 ? SDL_clamp(mouseY / 800.f, -3, -1) : SDL_clamp(mouseY / 800.f, 1, 3);
-				origin += forward * (deltaTime * movementSpeed * movementDist);
+				movementDirection += mouseY > 0 ? forward : -forward;
+				origin += movementDirection * (deltaTime * movementSpeed * movementSpeedMouse);
 			}
 		}
 

@@ -20,6 +20,7 @@ namespace dae {
 
 		const float ROTATION_SPEED = .05f;
 		float movementSpeed = 10.f;
+		float movementSpeedMouse = 50.f;
 		Vector3 origin{};
 
 	private:

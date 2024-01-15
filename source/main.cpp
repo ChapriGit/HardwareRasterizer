@@ -69,6 +69,9 @@ int main(int argc, char* args[])
 				if (e.key.keysym.scancode == SDL_SCANCODE_F7) {
 					pRenderer->toggleFireMesh();
 				}
+				if (e.key.keysym.scancode == SDL_SCANCODE_LSHIFT) {
+					pRenderer->changeCameraMovement(10.f);
+				}
 				break;
 			case SDL_MOUSEWHEEL:
 				pRenderer->changeCameraMovement(e.wheel.y * 1.5f);
